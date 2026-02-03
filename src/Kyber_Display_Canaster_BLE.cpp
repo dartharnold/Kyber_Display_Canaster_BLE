@@ -54,6 +54,9 @@ int8_t scan_rssi;
 uint16_t area_num;
 String beacon_name = "";
 
+// Function Declaration
+void scan_callback(ble_gap_evt_adv_report_t* report);
+
 void setup() {
   Serial.begin(115200);
   // while ( !Serial ) delay(10);   // for nrf52840 with native usb
@@ -106,7 +109,7 @@ void setup() {
 
 void scan_callback(ble_gap_evt_adv_report_t* report) {
   PRINT_LOCATION();
-  uint8_t len = 0;
+  //uint8_t len = 0;
   uint8_t beacon_name_buff[32];
   uint8_t md_len = 0;
   uint8_t md_buffer[32];
@@ -114,8 +117,8 @@ void scan_callback(ble_gap_evt_adv_report_t* report) {
   memset(beacon_name_buff, 0, sizeof(beacon_name_buff));
   memset(md_buffer, 0, sizeof(md_buffer));
 
-  uint8_t mfg_size;
-  uint8_t mfg_data[32];
+  //uint8_t mfg_size;
+  //uint8_t mfg_data[32];
 
   /* Check for Manufacturer Specific Data is it a Location?*/
   md_len = Bluefruit.Scanner.parseReportByType(report, BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA, md_buffer, sizeof(md_buffer));
@@ -126,7 +129,7 @@ void scan_callback(ble_gap_evt_adv_report_t* report) {
 
     // Convert beacon_name_buff to string beacon_name
     beacon_name = "";  // clear name to rebuild
-    for (int i = 0; i < sizeof(beacon_name); i++) {
+    for (byte i = 0; i < sizeof(beacon_name); i++) {
       if (beacon_name_buff[i] > 0) {
         beacon_name.concat(char(beacon_name_buff[i]));
       }
