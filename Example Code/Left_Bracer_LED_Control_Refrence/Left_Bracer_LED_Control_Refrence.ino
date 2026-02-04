@@ -1,10 +1,11 @@
+#include <Arduino.h>
 #include <bluefruit.h>
 #include <Adafruit_NeoPixel.h>
 
 // NeoPixel declarations
 // Which pin on the Arduino is connected to the NeoPixels?
 #define NEOPIN 7
-#define PIXELCOUNT 14  // How many NeoPixels are attached to the Arduino?
+#define PIXELCOUNT 3  // How many NeoPixels are attached to the Arduino?
 #define NEOBRIGHT 75
 #define PIXELFORMAT NEO_GRB + NEO_KHZ800  // NeoPixel color format & data rate. See the strandtest example for information on possible values.
 
@@ -73,6 +74,7 @@ void setup() {
   ORANGE = pixels->Color(255, 165, 0);
   WHITE = pixels->Color(255, 255, 255);
   BLACK = pixels->Color(0, 0, 0);
+  DARKPURPLE = pixels->Color(48, 25, 52);
 
   pixels->begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
 

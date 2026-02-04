@@ -4,17 +4,19 @@
 
 // NeoPixel declarations
 // Which pin on the Arduino is connected to the NeoPixels?
-#define NEOPIN_ODD 7
-#define NEOPIN_EVEN 10
+// #define NEOPIN_ODD 7
+// #define NEOPIN_EVEN 10
 #define PIXELCOUNT 3  // How many NeoPixels are attached to the Arduino?
 #define NEOBRIGHT 75
 #define PIXELFORMAT NEO_GRB + NEO_KHZ800  // NeoPixel color format & data rate. See the strandtest example for information on possible values.
 
-uint32_t RED, GREEN, BLUE, CYAN, PURPLE, YELLOW, ORANGE, WHITE, BLACK;
+uint32_t BLACK, WHITE, RED, PURPLE, DARKPURPLE, BLUE, CYAN, GREEN, YELLOW, ORANGE;
 
 // Rather than declaring the whole NeoPixel object here, we just create
 // a pointer for one, which we'll then allocate later...
-Adafruit_NeoPixel* odd_pixels, even_pixels;
+
+Adafruit_NeoPixel strip[2];
+uint8_t pins[2] = {6, 12};
 
 // Device Info
 const char* DEVNAME = "KyberVault";
@@ -32,14 +34,14 @@ const char* DEVNAME = "KyberVault";
 // #define FIRSTORDER  0x07
 
 // Location IDs (in Int)
-#define NOBEACON 0
-#define MARKETPLACE 1
-#define BEHINDDEPOT 2
-#define RESISTANCE 3
-#define UNKNOWN 4
-#define DROIDDEPOT 5
-#define DOKONDARS 6
-#define FIRSTORDER 7
+#define NOBEACON      0
+#define MARKETPLACE   1
+#define BEHINDDEPOT   2
+#define RESISTANCE    3
+#define UNKNOWN       4
+#define DROIDDEPOT    5
+#define DOKONDARS     6
+#define FIRSTORDER    7
 
 // Filters
 #define RSSI -75
@@ -66,20 +68,34 @@ void setup() {
   last_activity = CHANGEDELY;
 
   // Create a new NeoPixel object dynamically with these values:
-  odd_pixels = new Adafruit_NeoPixel(PIXELCOUNT, NEOPIN_ODD, PIXELFORMAT);
+  for (int x = 0; x <= 1; x++) {
+    strip[x].updateLength(PIXELCOUNT);
+    strip[x].updateType(PIXELFORMAT);
+    strip[x].setPin(pins[x]);
+  }
 
   // Setup some Basic Colors to work with
-  RED = odd_pixels->Color(255, 0, 0);
-  GREEN = odd_pixels->Color(0, 255, 0);
-  BLUE = odd_pixels->Color(0, 0, 255);
-  CYAN = odd_pixels->Color(0, 255, 255);
-  PURPLE = odd_pixels->Color(255, 0, 255);
-  YELLOW = odd_pixels->Color(255, 191, 0);
-  ORANGE = odd_pixels->Color(255, 165, 0);
-  WHITE = odd_pixels->Color(255, 255, 255);
-  BLACK = odd_pixels->Color(0, 0, 0);
-
-  odd_pixels->begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
+  uint32_t BLACK = strip.Color(0, 0, 0);
+  uint32_t WHITE = strip.Color(255, 255, 255);
+  uint32_t RED = strip.Color(255, 0, 0);
+  uint32_t PURPLE = strip.Color(255, 0, 255);
+  uint32_t DARKPURPLE = strip.Color(48, 25, 52);
+  uint32_t BLUE = strip.Color(0, 0, 255);
+  uint32_t CYAN = strip.Color(0, 255, 255);
+  uint32_t GREEN = strip.Color(0, 255, 0);
+  uint32_t YELLOW = strip.Color(255, 191, 0);
+  uint32_t ORANGE = strip.Color(255, 165, 0);
+  
+  for (int x = 0; x <= 1 ; x++) {
+    strip[x].begin();
+    strip[x].show();
+    for (int p = 0; p <= 2; p++) {
+      strip[x].setPixelColor(p, strip[x].Color(255,255,255));
+    }
+    strip[x].setBrightness(25);
+    strip[x].show();
+  }
+  randomSeed(analogRead(0));
 
   // Initialize Bluefruit with maximum connections as Peripheral = 0, Central = 1
   // SRAM usage required by SoftDevice will increase dramatically with number of connections
@@ -168,8 +184,10 @@ void updatePixels() {
   uint32_t DelayOn = random(200, 800);
   uint8_t pixel;
 
-  odd_pixels->clear();  // Set all pixel colors to 'off'
-  odd_pixels->show();
+  for (int x = 0; x <= 1; x++) {
+    strip[x]->clear();
+    strip[x]->show();
+  }
 
   delay(DelayOff);  // Pause Pixel Off for this pass through loop
 
@@ -228,6 +246,34 @@ void updatePixels() {
   odd_pixels->setBrightness(NEOBRIGHT);
   odd_pixels->show();  // Send the updated pixel colors to the hardware.
   delay(DelayOn);  // Pause Pixel On before next pass through loop
+}
+
+void colorPulse() {
+  int stripNumber = random(0,2);  
+  int pixelNumber = random(0,3);
+  int rColor = random(5,21);
+  int bColor = random(100,256);
+  int iDelay = random(50,201);
+  int iBright = random(150,256);
+
+  if ((stripNumber == 0) && (pixelNumber == 0)) {
+    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,0,0));
+  } else if ((stripNumber == 0) && (pixelNumber == 1)) {
+    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
+  } else if ((stripNumber == 0) && (pixelNumber == 2)) {
+    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(178,132,190));
+  } else if ((stripNumber == 1) && (pixelNumber == 0)) {
+    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
+  } else if ((stripNumber == 1) && (pixelNumber == 1)) {
+    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,255,0));
+  } else if ((stripNumber == 1) && (pixelNumber == 2)) {
+    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,255,0));
+  } else {
+    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(rColor, 255, bColor));
+  }
+  delay(iDelay);
+  strip[stripNumber].setBrightness(iBright);
+  strip[stripNumber].show();
 }
 
 void loop() {
