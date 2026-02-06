@@ -4,34 +4,17 @@
 
 // NeoPixel declarations
 // Which pin on the Arduino is connected to the NeoPixels?
-// #define NEOPIN_ODD 7
-// #define NEOPIN_EVEN 10
+Adafruit_NeoPixel strip[2];
+uint8_t pins[2] = {7, 9};
 #define PIXELCOUNT 3  // How many NeoPixels are attached to the Arduino?
 #define NEOBRIGHT 75
 #define PIXELFORMAT NEO_GRB + NEO_KHZ800  // NeoPixel color format & data rate. See the strandtest example for information on possible values.
-
-uint32_t BLACK, WHITE, RED, PURPLE, DARKPURPLE, BLUE, CYAN, GREEN, YELLOW, ORANGE;
-
-// Rather than declaring the whole NeoPixel object here, we just create
-// a pointer for one, which we'll then allocate later...
-
-Adafruit_NeoPixel strip[2];
-uint8_t pins[2] = {6, 12};
 
 // Device Info
 const char* DEVNAME = "KyberVault";
 
 // Counters and Timers
 #define CHANGEDELY 15*1000
-
-// Location IDs (in Hex)
-// #define MARKETPLACE 0x01
-// #define BEHINDDEPOT 0x02
-// #define RESISTANCE  0x03
-// #define UNKNOWN     0x04
-// #define DROIDDEPOT  0x05
-// #define DOKONDARS   0x06
-// #define FIRSTORDER  0x07
 
 // Location IDs (in Int)
 #define NOBEACON      0
@@ -42,6 +25,20 @@ const char* DEVNAME = "KyberVault";
 #define DROIDDEPOT    5
 #define DOKONDARS     6
 #define FIRSTORDER    7
+
+// Crystal Colors
+#define BLACK         0x00000000
+#define WHITE         0x00FFFFFF
+#define RED           0x00FF0000
+#define CRIMSONRED    0x00DC143C
+#define PURPLE        0x00FF00FF
+#define DARKPURPLE    0x00301934
+#define BLUE          0x000000FF
+#define CYAN          0x0000FFFF
+#define GREEN         0x0000FF00
+#define YELLOW        0x00FFBF00
+#define ORANGE        0x00FF7E00
+//#define ORANGE        0x00FFA500
 
 // Filters
 #define RSSI -75
@@ -73,24 +70,13 @@ void setup() {
     strip[x].updateType(PIXELFORMAT);
     strip[x].setPin(pins[x]);
   }
-
-  // Setup some Basic Colors to work with
-  uint32_t BLACK = strip.Color(0, 0, 0);
-  uint32_t WHITE = strip.Color(255, 255, 255);
-  uint32_t RED = strip.Color(255, 0, 0);
-  uint32_t PURPLE = strip.Color(255, 0, 255);
-  uint32_t DARKPURPLE = strip.Color(48, 25, 52);
-  uint32_t BLUE = strip.Color(0, 0, 255);
-  uint32_t CYAN = strip.Color(0, 255, 255);
-  uint32_t GREEN = strip.Color(0, 255, 0);
-  uint32_t YELLOW = strip.Color(255, 191, 0);
-  uint32_t ORANGE = strip.Color(255, 165, 0);
   
+  // Initialize the NeoPixels and turn them all off (black) at startup:
   for (int x = 0; x <= 1 ; x++) {
     strip[x].begin();
     strip[x].show();
     for (int p = 0; p <= 2; p++) {
-      strip[x].setPixelColor(p, strip[x].Color(255,255,255));
+      strip[x].setPixelColor(p, BLACK);
     }
     strip[x].setBrightness(25);
     strip[x].show();
@@ -179,103 +165,110 @@ void scan_callback(ble_gap_evt_adv_report_t* report) {
   Bluefruit.Scanner.resume();
 }
 
-void updatePixels() {
-  uint32_t DelayOff = random(200, 500);
-  uint32_t DelayOn = random(200, 800);
-  uint8_t pixel;
+// void updatePixels() {
+//   uint32_t DelayOff = random(200, 500);
+//   uint32_t DelayOn = random(200, 800);
+//   uint8_t pixel;
 
-  for (int x = 0; x <= 1; x++) {
-    strip[x]->clear();
-    strip[x]->show();
-  }
+//   for (int x = 0; x <= 1; x++) {
+//     strip[x]->clear();
+//     strip[x]->show();
+//   }
 
-  delay(DelayOff);  // Pause Pixel Off for this pass through loop
+//   delay(DelayOff);  // Pause Pixel Off for this pass through loop
 
-  // Setup to turn Pixels On
-  //Serial.println(area_num);
-  switch (area_num) {
-    case MARKETPLACE:
-      //Serial.println("Marketplace, Change to Green");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, GREEN);
-      }
-      break;
-    case BEHINDDEPOT:
-      //Serial.println("Behind Depot, Change to Yellow");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, YELLOW);
-      }
-      break;
-    case RESISTANCE:
-      //Serial.println("Resistance, Change to Blue");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, BLUE);
-      }
-      break;
-    case UNKNOWN:
-      //Serial.println("Unknown, Change to Cyan");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, CYAN);
-      }
-      break;
-    case DROIDDEPOT:
-      //Serial.println("Droid Depot, Change to Purple");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, PURPLE);
-      }
-      break;
-    case DOKONDARS:
-      //Serial.println("Dok Ondars, Change to Cyan");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, ORANGE);
-      }
-      break;
-    case FIRSTORDER:
-      //Serial.println("First Order, Change to Red");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, RED);
-      }
-      break;
-    case NOBEACON:
-      //Serial.println("No Scan Detected, Change to White");
-      for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-        odd_pixels->setPixelColor(pixel, WHITE);
-      }
-      break;
-  }
-  odd_pixels->setBrightness(NEOBRIGHT);
-  odd_pixels->show();  // Send the updated pixel colors to the hardware.
-  delay(DelayOn);  // Pause Pixel On before next pass through loop
-}
+//   // Setup to turn Pixels On
+//   //Serial.println(area_num);
+//   switch (area_num) {
+//     case MARKETPLACE:
+//       //Serial.println("Marketplace, Change to Green");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, GREEN);
+//       }
+//       break;
+//     case BEHINDDEPOT:
+//       //Serial.println("Behind Depot, Change to Yellow");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, YELLOW);
+//       }
+//       break;
+//     case RESISTANCE:
+//       //Serial.println("Resistance, Change to Blue");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, BLUE);
+//       }
+//       break;
+//     case UNKNOWN:
+//       //Serial.println("Unknown, Change to Cyan");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, CYAN);
+//       }
+//       break;
+//     case DROIDDEPOT:
+//       //Serial.println("Droid Depot, Change to Purple");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, PURPLE);
+//       }
+//       break;
+//     case DOKONDARS:
+//       //Serial.println("Dok Ondars, Change to Cyan");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, ORANGE);
+//       }
+//       break;
+//     case FIRSTORDER:
+//       //Serial.println("First Order, Change to Red");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, RED);
+//       }
+//       break;
+//     case NOBEACON:
+//       //Serial.println("No Scan Detected, Change to White");
+//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
+//         odd_pixels->setPixelColor(pixel, WHITE);
+//       }
+//       break;
+//   }
+//   odd_pixels->setBrightness(NEOBRIGHT);
+//   odd_pixels->show();  // Send the updated pixel colors to the hardware.
+//   delay(DelayOn);  // Pause Pixel On before next pass through loop
+// }
 
 void colorPulse() {
-  int stripNumber = random(0,2);  
-  int pixelNumber = random(0,3);
-  int rColor = random(5,21);
-  int bColor = random(100,256);
-  int iDelay = random(50,201);
-  int iBright = random(150,256);
+   int stripNumber = random(0,2);  
+   int pixelNumber = random(0,3);
+   int iDelay = random(50,201);
+   int iBright = random(150,256);
 
-  if ((stripNumber == 0) && (pixelNumber == 0)) {
-    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,0,0));
-  } else if ((stripNumber == 0) && (pixelNumber == 1)) {
-    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
-  } else if ((stripNumber == 0) && (pixelNumber == 2)) {
-    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(178,132,190));
-  } else if ((stripNumber == 1) && (pixelNumber == 0)) {
-    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
-  } else if ((stripNumber == 1) && (pixelNumber == 1)) {
-    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,255,0));
-  } else if ((stripNumber == 1) && (pixelNumber == 2)) {
-    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,255,0));
-  } else {
-    strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(rColor, 255, bColor));
-  }
-  delay(iDelay);
-  strip[stripNumber].setBrightness(iBright);
-  strip[stripNumber].show();
-}
+//   if ((stripNumber == 0) && (pixelNumber == 0)) {
+//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,0,0));
+//   } else if ((stripNumber == 0) && (pixelNumber == 1)) {
+//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
+//   } else if ((stripNumber == 0) && (pixelNumber == 2)) {
+//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(178,132,190));
+//   } else if ((stripNumber == 1) && (pixelNumber == 0)) {
+//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
+//   } else if ((stripNumber == 1) && (pixelNumber == 1)) {
+//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,255,0));
+//   } else if ((stripNumber == 1) && (pixelNumber == 2)) {
+//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,255,0));
+//   }
+//   delay(iDelay);
+//   strip[stripNumber].setBrightness(iBright);
+//   strip[stripNumber].show();
+// }
 
 void loop() {
-  updatePixels();
+  //  updatePixels();
+  strip[0].clear();
+  strip[1].clear();
+  strip[0].setPixelColor(0,DARKPURPLE);
+  strip[0].setPixelColor(1,RED);
+  strip[0].setPixelColor(2,ORANGE);
+  strip[1].setPixelColor(0,BLUE);
+  strip[1].setPixelColor(1,GREEN);
+  strip[1].setPixelColor(2,YELLOW);
+  strip[0].show();
+  strip[1].show();
+  delay(1000);  
 }
