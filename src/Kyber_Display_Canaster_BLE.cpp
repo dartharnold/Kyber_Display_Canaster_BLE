@@ -15,7 +15,8 @@ uint8_t pins[STRIPCOUNT] = {7, 9};
 const char* DEVNAME = "KyberVault";
 
 // Counters and Timers
-#define CHANGEDELY 15*1000
+//#define CHANGEDELY 15*1000  // 15 second Delay
+#define CHANGEDELY 5*1000   // 5 second Delay
 
 // Location IDs (in Int)
 #define NOBEACON      0
@@ -265,5 +266,5 @@ void loop() {
      last_area_num = area_num;
   }
   colorPulse();
-  delay(1000);  
+  //delay(1000);  
 }
