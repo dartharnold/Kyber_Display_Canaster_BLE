@@ -4,12 +4,13 @@
 
 // NeoPixel declarations
 // Which pin on the Arduino is connected to the NeoPixels?
-Adafruit_NeoPixel strip[2];
-uint8_t pins[2] = {7, 9};
-#define PIXELCOUNT 3  // How many NeoPixels are attached to the Arduino?
+#define STRIPCOUNT 2  // How many separate strips of NeoPixels are attached to the Arduino?
+#define PIXELCOUNT 3  // How many NeoPixels are attached to each strip?
 #define NEOBRIGHT 75
 #define PIXELFORMAT NEO_GRB + NEO_KHZ800  // NeoPixel color format & data rate. See the strandtest example for information on possible values.
 
+Adafruit_NeoPixel strip[STRIPCOUNT];
+uint8_t pins[STRIPCOUNT] = {7, 9};
 // Device Info
 const char* DEVNAME = "KyberVault";
 
@@ -19,10 +20,10 @@ const char* DEVNAME = "KyberVault";
 // Location IDs (in Int)
 #define NOBEACON      0
 #define MARKETPLACE   1
-#define BEHINDDEPOT   2
+#define DROIDDEPOT    2
 #define RESISTANCE    3
 #define UNKNOWN       4
-#define DROIDDEPOT    5
+#define ALERT         5
 #define DOKONDARS     6
 #define FIRSTORDER    7
 
@@ -50,7 +51,7 @@ uint32_t last_activity;
 
 // Scan Values to store
 int8_t scan_rssi;
-uint16_t area_num;
+uint16_t area_num = 0, last_area_num = 9;
 String beacon_name = "";
 
 // Function Declaration
@@ -165,110 +166,104 @@ void scan_callback(ble_gap_evt_adv_report_t* report) {
   Bluefruit.Scanner.resume();
 }
 
-// void updatePixels() {
-//   uint32_t DelayOff = random(200, 500);
-//   uint32_t DelayOn = random(200, 800);
-//   uint8_t pixel;
-
-//   for (int x = 0; x <= 1; x++) {
-//     strip[x]->clear();
-//     strip[x]->show();
-//   }
-
-//   delay(DelayOff);  // Pause Pixel Off for this pass through loop
-
-//   // Setup to turn Pixels On
-//   //Serial.println(area_num);
-//   switch (area_num) {
-//     case MARKETPLACE:
-//       //Serial.println("Marketplace, Change to Green");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, GREEN);
-//       }
-//       break;
-//     case BEHINDDEPOT:
-//       //Serial.println("Behind Depot, Change to Yellow");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, YELLOW);
-//       }
-//       break;
-//     case RESISTANCE:
-//       //Serial.println("Resistance, Change to Blue");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, BLUE);
-//       }
-//       break;
-//     case UNKNOWN:
-//       //Serial.println("Unknown, Change to Cyan");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, CYAN);
-//       }
-//       break;
-//     case DROIDDEPOT:
-//       //Serial.println("Droid Depot, Change to Purple");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, PURPLE);
-//       }
-//       break;
-//     case DOKONDARS:
-//       //Serial.println("Dok Ondars, Change to Cyan");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, ORANGE);
-//       }
-//       break;
-//     case FIRSTORDER:
-//       //Serial.println("First Order, Change to Red");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, RED);
-//       }
-//       break;
-//     case NOBEACON:
-//       //Serial.println("No Scan Detected, Change to White");
-//       for (pixel = 0; pixel <= PIXELCOUNT; pixel++) {
-//         odd_pixels->setPixelColor(pixel, WHITE);
-//       }
-//       break;
-//   }
-//   odd_pixels->setBrightness(NEOBRIGHT);
-//   odd_pixels->show();  // Send the updated pixel colors to the hardware.
-//   delay(DelayOn);  // Pause Pixel On before next pass through loop
-// }
+void updatePixels() {
+  // Setup to turn Pixels On
+  //Serial.println(area_num);
+  switch (area_num) {
+    case MARKETPLACE:
+      //Serial.println("Marketplace, Change to Green");
+      strip[0].setPixelColor(0, GREEN);
+      strip[0].setPixelColor(1, BLUE);
+      strip[0].setPixelColor(2, YELLOW);
+      strip[1].setPixelColor(0, DARKPURPLE);
+      strip[1].setPixelColor(1, CYAN);
+      strip[1].setPixelColor(2, ORANGE);      
+      break;
+    case ALERT:
+      //Serial.println("Behind Depot, Change to Yellow");
+      strip[0].setPixelColor(0, YELLOW);
+      strip[0].setPixelColor(1, ORANGE);
+      strip[0].setPixelColor(2, CYAN);
+      strip[1].setPixelColor(0, YELLOW);
+      strip[1].setPixelColor(1, ORANGE);
+      strip[1].setPixelColor(2, CYAN);      
+      break;
+    case RESISTANCE:
+      //Serial.println("Resistance, Change to Blue");
+      strip[0].setPixelColor(0, BLUE);
+      strip[0].setPixelColor(1, GREEN);
+      strip[0].setPixelColor(2, CYAN);
+      strip[1].setPixelColor(0, PURPLE);
+      strip[1].setPixelColor(1, WHITE);
+      strip[1].setPixelColor(2, YELLOW);      
+      break;
+    case UNKNOWN:
+      //Serial.println("Unknown, Change to Cyan");
+      for (uint16_t s = 0; s <= STRIPCOUNT-1; s++) {
+        for (uint16_t p = 0; p <= PIXELCOUNT-1; p++) {
+          strip[s].setPixelColor(p, WHITE);
+        }
+      }
+      break;
+    case DROIDDEPOT:
+      //Serial.println("Droid Depot, Change to Purple");
+      strip[0].setPixelColor(0, CYAN);
+      strip[0].setPixelColor(1, BLUE);
+      strip[0].setPixelColor(2, CYAN);
+      for (uint16_t p = 0; p <= PIXELCOUNT-1; p++) {
+          strip[1].setPixelColor(p, GREEN);
+      }
+      break;
+    case DOKONDARS:
+      //Serial.println("Dok Ondars, Change to Cyan");
+      strip[0].setPixelColor(0, PURPLE);
+      strip[0].setPixelColor(1, BLUE);
+      strip[0].setPixelColor(2, GREEN);
+      strip[1].setPixelColor(0, DARKPURPLE);
+      strip[1].setPixelColor(1, BLUE);
+      strip[1].setPixelColor(2, GREEN);      
+      break;
+    case FIRSTORDER:
+      //Serial.println("First Order, Change to Red");
+      for (uint16_t s = 0; s <= STRIPCOUNT-1; s++) {
+        for (uint16_t p = 0; p <= PIXELCOUNT-1; p++) {
+          strip[s].setPixelColor(p, RED);
+        }
+      }
+      break;
+    case NOBEACON:
+      //Serial.println("No Scan Detected, Change to White");
+      strip[0].setPixelColor(0, PURPLE);
+      strip[0].setPixelColor(1, BLUE);
+      strip[0].setPixelColor(2, CYAN);
+      strip[1].setPixelColor(0, GREEN);
+      strip[1].setPixelColor(1, YELLOW);
+      strip[1].setPixelColor(2, ORANGE);      
+      break;
+  }
+  for (uint16_t s = 0; s <= STRIPCOUNT-1; s++) {
+    strip[s].setBrightness(NEOBRIGHT);
+    strip[s].show();
+  }
+  //delay(DelayOn);  // Pause Pixel On before next pass through loop
+}
 
 void colorPulse() {
    int stripNumber = random(0,2);  
-   int pixelNumber = random(0,3);
+//   int pixelNumber = random(0,3);
    int iDelay = random(50,201);
    int iBright = random(150,256);
 
-//   if ((stripNumber == 0) && (pixelNumber == 0)) {
-//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,0,0));
-//   } else if ((stripNumber == 0) && (pixelNumber == 1)) {
-//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
-//   } else if ((stripNumber == 0) && (pixelNumber == 2)) {
-//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(178,132,190));
-//   } else if ((stripNumber == 1) && (pixelNumber == 0)) {
-//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,0,255));
-//   } else if ((stripNumber == 1) && (pixelNumber == 1)) {
-//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(255,255,0));
-//   } else if ((stripNumber == 1) && (pixelNumber == 2)) {
-//     strip[stripNumber].setPixelColor(pixelNumber, strip[stripNumber].Color(0,255,0));
-//   }
-//   delay(iDelay);
-//   strip[stripNumber].setBrightness(iBright);
-//   strip[stripNumber].show();
-// }
+  delay(iDelay);
+  strip[stripNumber].setBrightness(iBright);
+  strip[stripNumber].show(); 
+}
 
 void loop() {
-  //  updatePixels();
-  strip[0].clear();
-  strip[1].clear();
-  strip[0].setPixelColor(0,DARKPURPLE);
-  strip[0].setPixelColor(1,RED);
-  strip[0].setPixelColor(2,ORANGE);
-  strip[1].setPixelColor(0,BLUE);
-  strip[1].setPixelColor(1,GREEN);
-  strip[1].setPixelColor(2,YELLOW);
-  strip[0].show();
-  strip[1].show();
+  if (area_num != last_area_num) {
+     updatePixels();
+     last_area_num = area_num;
+  }
+  colorPulse();
   delay(1000);  
 }
