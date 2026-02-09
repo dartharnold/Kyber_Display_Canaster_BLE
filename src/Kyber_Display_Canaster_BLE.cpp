@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <bluefruit.h>
 #include <Adafruit_NeoPixel.h>
-
+ 
 // NeoPixel declarations
 // Which pin on the Arduino is connected to the NeoPixels?
 #define STRIPCOUNT 2  // How many separate strips of NeoPixels are attached to the Arduino?
@@ -114,16 +114,12 @@ void setup() {
 
 void scan_callback(ble_gap_evt_adv_report_t* report) {
   PRINT_LOCATION();
-  //uint8_t len = 0;
   uint8_t beacon_name_buff[32];
   uint8_t md_len = 0;
   uint8_t md_buffer[32];
 
   memset(beacon_name_buff, 0, sizeof(beacon_name_buff));
   memset(md_buffer, 0, sizeof(md_buffer));
-
-  //uint8_t mfg_size;
-  //uint8_t mfg_data[32];
 
   /* Check for Manufacturer Specific Data is it a Location?*/
   md_len = Bluefruit.Scanner.parseReportByType(report, BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA, md_buffer, sizeof(md_buffer));
@@ -151,6 +147,8 @@ void scan_callback(ble_gap_evt_adv_report_t* report) {
       /* RSSI value */
       scan_rssi = report->rssi;
 
+      // Print out the report data for debugging
+      //
       // Serial.println();
       // Serial.print("Beacon Host: ");
       // Serial.println(beacon_name);
@@ -170,10 +168,12 @@ void scan_callback(ble_gap_evt_adv_report_t* report) {
 
 void updatePixels() {
   // Setup to turn Pixels On
-  //Serial.println(area_num);
+  // Print out the report data for debugging
+  //
+  // Serial.println(area_num);
   switch (area_num) {
     case MARKETPLACE:
-      //Serial.println("Marketplace, Change to Green");
+      // Serial.println("Marketplace, Change to Green");
       strip[0].setPixelColor(0, GREEN);
       strip[1].setPixelColor(0, BLUE);
       strip[0].setPixelColor(1, YELLOW);
@@ -182,7 +182,7 @@ void updatePixels() {
       strip[1].setPixelColor(2, ORANGE);      
       break;
     case ALERT:
-      //Serial.println("Behind Depot, Change to Yellow");
+      // Serial.println("Behind Depot, Change to Yellow");
       strip[0].setPixelColor(0, YELLOW);
       strip[1].setPixelColor(0, ORANGE);
       strip[0].setPixelColor(1, CYAN);
@@ -191,7 +191,7 @@ void updatePixels() {
       strip[1].setPixelColor(2, CYAN);      
       break;
     case RESISTANCE:
-      //Serial.println("Resistance, Change to Blue");
+      // Serial.println("Resistance, Change to Blue");
       strip[0].setPixelColor(0, BLUE);
       strip[1].setPixelColor(0, GREEN);
       strip[0].setPixelColor(1, CYAN);
@@ -200,7 +200,7 @@ void updatePixels() {
       strip[1].setPixelColor(2, YELLOW);      
       break;
     case UNKNOWN:
-      //Serial.println("Unknown, Change to Cyan");
+      // Serial.println("Unknown, Change to Cyan");
       for (uint16_t s = 0; s <= STRIPCOUNT-1; s++) {
         for (uint16_t p = 0; p <= PIXELCOUNT-1; p++) {
           strip[s].setPixelColor(p, WHITE);
@@ -208,7 +208,7 @@ void updatePixels() {
       }
       break;
     case DROIDDEPOT:
-      //Serial.println("Droid Depot, Change to Purple");
+      // Serial.println("Droid Depot, Change to Purple");
       strip[0].setPixelColor(0, CYAN);
       strip[0].setPixelColor(1, BLUE);
       strip[0].setPixelColor(2, CYAN);
@@ -217,7 +217,7 @@ void updatePixels() {
       }
       break;
     case DOKONDARS:
-      //Serial.println("Dok Ondars, Change to Cyan");
+      // Serial.println("Dok Ondars, Change to Cyan");
       strip[0].setPixelColor(0, PURPLE);
       strip[1].setPixelColor(0, BLUE);
       strip[0].setPixelColor(1, GREEN);
@@ -226,7 +226,7 @@ void updatePixels() {
       strip[1].setPixelColor(2, GREEN);      
       break;
     case FIRSTORDER:
-      //Serial.println("First Order, Change to Red");
+      // Serial.println("First Order, Change to Red");
       for (uint16_t s = 0; s <= STRIPCOUNT-1; s++) {
         for (uint16_t p = 0; p <= PIXELCOUNT-1; p++) {
           strip[s].setPixelColor(p, RED);
@@ -234,7 +234,7 @@ void updatePixels() {
       }
       break;
     case NOBEACON:
-      //Serial.println("No Scan Detected, Change to White");
+      // Serial.println("No Scan Detected, Change to White");
       strip[0].setPixelColor(0, PURPLE);
       strip[1].setPixelColor(0, BLUE);
       strip[0].setPixelColor(1, CYAN);
@@ -247,12 +247,10 @@ void updatePixels() {
     strip[s].setBrightness(NEOBRIGHT);
     strip[s].show();
   }
-  //delay(DelayOn);  // Pause Pixel On before next pass through loop
 }
 
 void colorPulse() {
    int stripNumber = random(0,2);  
-//   int pixelNumber = random(0,3);
    int iDelay = random(50,201);
    int iBright = random(150,256);
 
@@ -267,5 +265,4 @@ void loop() {
      last_area_num = area_num;
   }
   colorPulse();
-  //delay(1000);  
 }
