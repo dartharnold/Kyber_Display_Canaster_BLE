@@ -35,7 +35,8 @@ const char* DEVNAME = "KyberVault";
 #define CRIMSONRED    0x00DC143C
 #define PURPLE        0x00FF00FF
 #define DARKPURPLE    0x00301934
-#define BLUE          0x000000FF
+#define BLUE          0x0000008B
+//#define BLUE          0x000000FF
 #define CYAN          0x0000FFFF
 #define GREEN         0x0000FF00
 #define YELLOW        0x00FFBF00
@@ -174,28 +175,28 @@ void updatePixels() {
     case MARKETPLACE:
       //Serial.println("Marketplace, Change to Green");
       strip[0].setPixelColor(0, GREEN);
-      strip[0].setPixelColor(1, BLUE);
-      strip[0].setPixelColor(2, YELLOW);
-      strip[1].setPixelColor(0, DARKPURPLE);
-      strip[1].setPixelColor(1, CYAN);
+      strip[1].setPixelColor(0, BLUE);
+      strip[0].setPixelColor(1, YELLOW);
+      strip[1].setPixelColor(1, DARKPURPLE);
+      strip[0].setPixelColor(2, CYAN);
       strip[1].setPixelColor(2, ORANGE);      
       break;
     case ALERT:
       //Serial.println("Behind Depot, Change to Yellow");
       strip[0].setPixelColor(0, YELLOW);
-      strip[0].setPixelColor(1, ORANGE);
-      strip[0].setPixelColor(2, CYAN);
-      strip[1].setPixelColor(0, YELLOW);
-      strip[1].setPixelColor(1, ORANGE);
+      strip[1].setPixelColor(0, ORANGE);
+      strip[0].setPixelColor(1, CYAN);
+      strip[1].setPixelColor(1, YELLOW);
+      strip[0].setPixelColor(2, ORANGE);
       strip[1].setPixelColor(2, CYAN);      
       break;
     case RESISTANCE:
       //Serial.println("Resistance, Change to Blue");
       strip[0].setPixelColor(0, BLUE);
-      strip[0].setPixelColor(1, GREEN);
-      strip[0].setPixelColor(2, CYAN);
-      strip[1].setPixelColor(0, PURPLE);
-      strip[1].setPixelColor(1, WHITE);
+      strip[1].setPixelColor(0, GREEN);
+      strip[0].setPixelColor(1, CYAN);
+      strip[1].setPixelColor(1, PURPLE);
+      strip[0].setPixelColor(2, WHITE);
       strip[1].setPixelColor(2, YELLOW);      
       break;
     case UNKNOWN:
@@ -218,10 +219,10 @@ void updatePixels() {
     case DOKONDARS:
       //Serial.println("Dok Ondars, Change to Cyan");
       strip[0].setPixelColor(0, PURPLE);
-      strip[0].setPixelColor(1, BLUE);
-      strip[0].setPixelColor(2, GREEN);
-      strip[1].setPixelColor(0, DARKPURPLE);
-      strip[1].setPixelColor(1, BLUE);
+      strip[1].setPixelColor(0, BLUE);
+      strip[0].setPixelColor(1, GREEN);
+      strip[1].setPixelColor(1, DARKPURPLE);
+      strip[0].setPixelColor(2, BLUE);
       strip[1].setPixelColor(2, GREEN);      
       break;
     case FIRSTORDER:
@@ -235,10 +236,10 @@ void updatePixels() {
     case NOBEACON:
       //Serial.println("No Scan Detected, Change to White");
       strip[0].setPixelColor(0, PURPLE);
-      strip[0].setPixelColor(1, BLUE);
-      strip[0].setPixelColor(2, CYAN);
-      strip[1].setPixelColor(0, GREEN);
-      strip[1].setPixelColor(1, YELLOW);
+      strip[1].setPixelColor(0, BLUE);
+      strip[0].setPixelColor(1, CYAN);
+      strip[1].setPixelColor(1, GREEN);
+      strip[0].setPixelColor(2, YELLOW);
       strip[1].setPixelColor(2, ORANGE);      
       break;
   }
