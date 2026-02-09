@@ -29,19 +29,19 @@ const char* DEVNAME = "KyberVault";
 #define FIRSTORDER    7
 
 // Crystal Colors
-#define BLACK         0x00000000
-#define WHITE         0x00FFFFFF
-#define RED           0x00FF0000
-#define CRIMSONRED    0x00DC143C
-#define PURPLE        0x00FF00FF
-#define DARKPURPLE    0x00301934
-#define BLUE          0x0000008B
-//#define BLUE          0x000000FF
-#define CYAN          0x0000FFFF
-#define GREEN         0x0000FF00
-#define YELLOW        0x00FFBF00
-#define ORANGE        0x00FF7E00
-//#define ORANGE        0x00FFA500
+#define BLACK         0x00000000    // #000000
+#define WHITE         0x00FFFFFF    // #FFFFFF
+#define RED           0x00FF0000    // #FF0000
+#define CRIMSONRED    0x00DC143C    // #DC143C  
+#define PURPLE        0x00FF00FF    // #FF00FF  
+#define DARKPURPLE    0x00301934    // #301934  
+#define BLUE          0x0000008B    // #00008B
+//#define BLUE          0x000000FF    // #0000FF
+#define CYAN          0x0000FFFF    // #00FFFF
+#define GREEN         0x0000FF00    // #00FF00
+#define YELLOW        0x00FFBF00    // #FFBF00
+#define ORANGE        0x00FF7E00    // #FF7E00 
+//#define ORANGE        0x00FFA500    // #FFA500   
 
 // Filters
 #define RSSI -75
